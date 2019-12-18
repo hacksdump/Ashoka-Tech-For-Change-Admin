@@ -1,9 +1,47 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
+import { logInSuccessful } from 'actions';
 
-class Login extends Component {
+const mapStateToProps = state => {
+  return {
+    loggedIn: state.auth.loggedIn
+  }
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    authenticate: () => dispatch(logInSuccessful()),
+  };
+};
+
+class ConnectedLogin extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: "",
+      password: "",
+      errors: [],
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    this.setState({
+      [event.target.id]: event.target.value
+    });
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+    // const { email, password } = this.state;
+    this.props.authenticate();
+    this.setState({ email: "", password: "" })
+  }
   render() {
+    const { email, password } = this.state;
     return (
       <div className="app flex-row align-items-center">
         <Container>
@@ -12,7 +50,7 @@ class Login extends Component {
               <CardGroup>
                 <Card className="p-4">
                   <CardBody>
-                    <Form>
+                    <Form onSubmit={this.handleSubmit}>
                       <h1>Login</h1>
                       <p className="text-muted">Sign In to your account</p>
                       <InputGroup className="mb-3">
@@ -21,7 +59,14 @@ class Login extends Component {
                             <i className="icon-user"></i>
                           </InputGroupText>
                         </InputGroupAddon>
-                        <Input type="text" placeholder="Username" autoComplete="username" />
+                        <Input
+                          id="email"
+                          type="text"
+                          placeholder="Username"
+                          autoComplete="username"
+                          value={email}
+                          onChange={this.handleChange}
+                        />
                       </InputGroup>
                       <InputGroup className="mb-4">
                         <InputGroupAddon addonType="prepend">
@@ -29,7 +74,14 @@ class Login extends Component {
                             <i className="icon-lock"></i>
                           </InputGroupText>
                         </InputGroupAddon>
-                        <Input type="password" placeholder="Password" autoComplete="current-password" />
+                        <Input
+                          id="password"
+                          type="password"
+                          placeholder="Password"
+                          autoComplete="current-password"
+                          value={password}
+                          onChange={this.handleChange}
+                        />
                       </InputGroup>
                       <Row>
                         <Col xs="6">
@@ -62,5 +114,10 @@ class Login extends Component {
     );
   }
 }
+
+const Login = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ConnectedLogin);
 
 export default Login;

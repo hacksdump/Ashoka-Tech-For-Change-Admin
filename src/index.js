@@ -13,6 +13,8 @@ import 'firebase/database';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { ReactReduxFirebaseProvider } from 'react-redux-firebase';
+import { PersistGate } from 'redux-persist/integration/react';
+import { persistor } from 'store';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -43,7 +45,9 @@ ReactDOM.render(
     <ReactReduxFirebaseProvider
       {...reactReduxFirebaseProps}
     >
-      <App />
+      <PersistGate loading={null} persistor={persistor}>
+        <App />
+      </PersistGate>
     </ReactReduxFirebaseProvider>
   </Provider>,
   document.getElementById('root')

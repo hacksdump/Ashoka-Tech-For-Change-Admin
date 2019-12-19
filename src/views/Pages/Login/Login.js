@@ -3,11 +3,13 @@ import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
 import { attemptLogin } from 'actions';
+import { ADMIN_ROLES } from 'constants/user-roles';
 
 
 const mapStateToProps = state => {
+  const loggedIn = !state.firebase.auth.isEmpty && ADMIN_ROLES.includes(state.firebase.profile.role);
   return {
-    loggedIn: state.auth.loggedIn,
+    loggedIn: loggedIn,
     firebase: state.firebase,
   }
 };

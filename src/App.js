@@ -25,7 +25,7 @@ const ConnectedPrivateRoute = ({ component: Component, ...rest }) => (
 
 const mapStateToProps = state => {
   return {
-    isLoggedIn: state.auth.loggedIn,
+    isLoggedIn: !state.firebase.auth.isEmpty,
   }
 }
 

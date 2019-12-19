@@ -1,41 +1,56 @@
-import React, { Component } from 'react';
+import React from 'react';
 import ComplaintCard from './ComplaintCard';
-import { connect } from 'react-redux';
-import { fetchComplaints, clearComplaints, setComplaintStatus } from 'actions';
+import { connect, useSelector } from 'react-redux';
+import { setComplaintStatus } from 'actions';
+import { useFirebaseConnect } from 'react-redux-firebase';
+import { MEDIATOR, OFFICIAL } from 'constants/user-roles';
 
 const mapStateToProps = state => {
-  return {
-    complaints: state.complaints
+  const data = {
+    user: {
+      name: state.firebase.profile.name
+    }
   }
+  if (state.firebase.profile.role === MEDIATOR) {
+    data.user.role = MEDIATOR;
+  }
+  else if (state.firebase.profile.role === OFFICIAL) {
+    data.user.role = OFFICIAL;
+  }
+  return data
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchComplaints: () => dispatch(fetchComplaints()),
-    clearComplaints: () => dispatch(clearComplaints()),
     setComplaintStatus: (complaintID, status) => dispatch(setComplaintStatus(complaintID, status)),
   }
 }
 
-class ConnectedComplaints extends Component {
-  componentDidMount() {
-    this.props.clearComplaints();
-    this.props.fetchComplaints();
-  }
-  render() {
-    return (
-      <div>
-        {this.props.complaints.map(complaintData => (
+function ConnectedComplaints(props) {
+  useFirebaseConnect([
+    {
+      path: 'complaints',
+      queryParams: ['orderByChild=officerName', `equalTo=${props.user.name}`]
+    },
+  ]);
+  const complaints = useSelector(state => state.firebase.ordered.complaints);
+  return (
+    <div>
+      {complaints ? complaints.map(data => {
+        const complaintData = data.value;
+        return (
           <ComplaintCard
             key={complaintData.compID}
             {...complaintData}
-            setComplaintStatus={(status) => this.props.setComplaintStatus(complaintData.compID, status)}
+            setComplaintStatus={(status) => props.setComplaintStatus(complaintData.compID, status)}
           />
-        ))}
-      </div>
-    )
-  }
+        )
+      })
+        : <div>No complaints</div>}
+    </div>
+  )
 }
+
 
 const Complaints = connect(mapStateToProps, mapDispatchToProps)(ConnectedComplaints);
 

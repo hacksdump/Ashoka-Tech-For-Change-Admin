@@ -7,12 +7,44 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import { Provider } from 'react-redux';
 import store from 'store';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/database';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { ReactReduxFirebaseProvider } from 'react-redux-firebase';
+
+const firebaseConfig = {
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
+};
+
+firebase.initializeApp(firebaseConfig);
+firebase.database();
+
+const reactReduxFirebaseConfig = {
+  userProfile: 'users'
+};
+
+const reactReduxFirebaseProps = {
+  firebase,
+  config: reactReduxFirebaseConfig,
+  dispatch: store.dispatch,
+}
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <ReactReduxFirebaseProvider
+      {...reactReduxFirebaseProps}
+    >
+      <App />
+    </ReactReduxFirebaseProvider>
   </Provider>,
   document.getElementById('root')
 );

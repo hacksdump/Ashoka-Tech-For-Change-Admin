@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
 import { attemptLogin } from 'actions';
 
@@ -47,15 +47,23 @@ class ConnectedLogin extends Component {
     this.setState({ email: "", password: "" })
   }
   render() {
+    console.log("render login")
     const { email, password } = this.state;
+    const loggedIn = this.props.loggedIn;
+    if (loggedIn) {
+      return (
+        <Redirect to="/" />
+      )
+    }
     return (
-      <div className="app flex-row align-items-center">
+      < div className="app flex-row align-items-center" >
         <Container>
           <Row className="justify-content-center">
             <Col md="8">
               <CardGroup>
                 <Card className="p-4">
                   <CardBody>
+                    {this.props.loggedIn ? "Logged In already" : "Not LoggedIn"}
                     <Form onSubmit={this.handleSubmit}>
                       <h1>Login</h1>
                       <p className="text-muted">Sign In to your account</p>
@@ -116,7 +124,7 @@ class ConnectedLogin extends Component {
             </Col>
           </Row>
         </Container>
-      </div>
+      </div >
     );
   }
 }

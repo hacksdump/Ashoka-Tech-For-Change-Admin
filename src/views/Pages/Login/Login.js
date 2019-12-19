@@ -47,7 +47,6 @@ class ConnectedLogin extends Component {
     this.setState({ email: "", password: "" })
   }
   render() {
-    console.log("render login")
     const { email, password } = this.state;
     const loggedIn = this.props.loggedIn;
     if (loggedIn) {

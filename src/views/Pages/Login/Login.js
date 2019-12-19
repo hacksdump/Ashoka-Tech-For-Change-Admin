@@ -63,7 +63,6 @@ class ConnectedLogin extends Component {
               <CardGroup>
                 <Card className="p-4">
                   <CardBody>
-                    {this.props.loggedIn ? "Logged In already" : "Not LoggedIn"}
                     <Form onSubmit={this.handleSubmit}>
                       <h1>Login</h1>
                       <p className="text-muted">Sign In to your account</p>

@@ -2,17 +2,19 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
-import { logInSuccessful } from 'actions';
+import { attemptLogin } from 'actions';
+
 
 const mapStateToProps = state => {
   return {
-    loggedIn: state.auth.loggedIn
+    loggedIn: state.auth.loggedIn,
+    firebase: state.firebase,
   }
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    authenticate: () => dispatch(logInSuccessful()),
+    authenticate: (credentials) => dispatch(attemptLogin(credentials)),
   };
 };
 
@@ -35,9 +37,13 @@ class ConnectedLogin extends Component {
   }
 
   handleSubmit(event) {
+    ;
     event.preventDefault();
-    // const { email, password } = this.state;
-    this.props.authenticate();
+    const { email, password } = this.state;
+    this.props.authenticate({
+      email: email,
+      password: password
+    });
     this.setState({ email: "", password: "" })
   }
   render() {

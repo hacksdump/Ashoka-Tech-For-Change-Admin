@@ -1,5 +1,12 @@
 import { combineReducers } from 'redux';
-import { LOGIN_SUCCESSFUL, LOGIN_FAILURE, ATTEMPT_LOGOUT, COMPLAINTS_FETCHED, CLEAR_COMPLAINTS } from 'constants/action-types';
+import {
+  LOGIN_SUCCESSFUL,
+  LOGIN_FAILURE,
+  ATTEMPT_LOGOUT,
+  COMPLAINTS_FETCHED,
+  CLEAR_COMPLAINTS,
+  COMPLAINT_STATUS_UPDATE_SUCCESS
+} from 'constants/action-types';
 import { firebaseReducer } from 'react-redux-firebase';
 
 
@@ -33,10 +40,17 @@ function authReducer(state = initialAuthState, action) {
 function complaintReducer(state = initialComplaints, action) {
   switch (action.type) {
     case COMPLAINTS_FETCHED:
-      console.log(action)
       return state.concat(action.payload);
     case CLEAR_COMPLAINTS:
       return initialComplaints;
+    case COMPLAINT_STATUS_UPDATE_SUCCESS:
+      const newState = Object.assign([], state);
+      for (let i = 0; i < newState.length; i++) {
+        if (newState[i].compID === action.payload.compID) {
+          newState[i].status = action.payload.newStatus;
+        }
+      }
+      return newState;
     default:
       return state;
   }

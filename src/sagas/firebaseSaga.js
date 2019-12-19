@@ -1,5 +1,15 @@
 import { takeEvery, call, put, fork, all } from 'redux-saga/effects';
-import { ATTEMPT_LOGIN, LOGIN_SUCCESSFUL, LOGIN_FAILURE, FETCH_COMPLAINTS, COMPLAINTS_FETCHED, COMPLAINTS_FETCH_ERROR } from 'constants/action-types';
+import {
+  ATTEMPT_LOGIN,
+  LOGIN_SUCCESSFUL,
+  LOGIN_FAILURE,
+  FETCH_COMPLAINTS,
+  COMPLAINTS_FETCHED,
+  COMPLAINTS_FETCH_ERROR,
+  SET_COMPLAINT_STATUS,
+  COMPLAINT_STATUS_UPDATE_SUCCESS,
+  COMPLAINT_STATUS_UPDATE_ERROR
+} from 'constants/action-types';
 import firebase from 'firebase/app';
 
 /******************************************************************************/
@@ -16,10 +26,16 @@ function* fetchComplaintsWatcher() {
     fetchComplaintsWorker);
 }
 
+function* setComplaintStatusWatcher() {
+  yield takeEvery(SET_COMPLAINT_STATUS,
+    setComplaintStatusWorker);
+}
+
 export default function* root() {
   yield all([
     fork(watcherSaga),
     fork(fetchComplaintsWatcher),
+    fork(setComplaintStatusWatcher),
   ])
 }
 /******************************************************************************/
@@ -43,6 +59,15 @@ function* fetchComplaintsWorker() {
     yield put({ type: COMPLAINTS_FETCH_ERROR, payload: e })
   }
 }
+
+function* setComplaintStatusWorker(action) {
+  try {
+    yield call(firebaseSetComplaintStatus, action.payload);
+    yield put({ type: COMPLAINT_STATUS_UPDATE_SUCCESS, payload: { compID: action.payload.compID, newStatus: action.payload.status } })
+  } catch (e) {
+    yield put({ type: COMPLAINT_STATUS_UPDATE_ERROR, payload: e })
+  }
+}
 /******************************************************************************/
 /******************************* API CALLS *************************************/
 /******************************************************************************/
@@ -61,4 +86,10 @@ function firebaseFetchComplaints() {
       resolve(complaints);
     })
   })
+}
+
+function firebaseSetComplaintStatus(payload) {
+  const updates = {};
+  updates[`/complaints/${payload.compID}/status`] = payload.status;
+  return firebase.database().ref().update(updates);
 }

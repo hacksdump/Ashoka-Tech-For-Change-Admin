@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
-import { LOGIN_SUCCESSFUL } from 'constants/action-types';
+import { LOGIN_SUCCESSFUL, LOGIN_FAILURE } from 'constants/action-types';
+import { firebaseReducer } from 'react-redux-firebase';
 
 
 const initialAuthState = {
@@ -9,10 +10,16 @@ const initialAuthState = {
 
 function authReducer(state = initialAuthState, action) {
   switch (action.type) {
+    case LOGIN_FAILURE:
+      return {
+        ...state,
+        authError: 'Login Failed'
+      }
     case LOGIN_SUCCESSFUL:
       return {
         ...state,
-        loggedIn: true
+        loggedIn: true,
+        authError: null,
       };
     default:
       return state;
@@ -21,6 +28,7 @@ function authReducer(state = initialAuthState, action) {
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  firebase: firebaseReducer,
 })
 
 export default rootReducer;

@@ -1,15 +1,5 @@
-import { ATTEMPT_LOGIN, LOGIN_SUCCESSFUL } from "constants/action-types";
+import { ATTEMPT_LOGIN } from "constants/action-types";
 
-export function attemptLogIn(payload) {
-  return {
-    type: ATTEMPT_LOGIN,
-    payload,
-  }
-}
-
-export function logInSuccessful(payload) {
-  return {
-    type: LOGIN_SUCCESSFUL,
-    payload,
-  }
+export function attemptLogin(payload) {
+  return { type: ATTEMPT_LOGIN, payload }
 }

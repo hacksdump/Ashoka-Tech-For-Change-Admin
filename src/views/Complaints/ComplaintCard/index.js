@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Card, CardHeader, CardBody, CardFooter, Collapse, Button } from 'reactstrap';
 import { COMPLAINT_STATUS } from 'constants/states';
+import ReactPlayer from 'react-player';
 
 function SetStatusButton(props) {
   let bootstrapClass = "";
@@ -84,9 +85,12 @@ export default class ComplaintCard extends Component {
         </CardHeader>
         <Collapse isOpen={this.state.isOpen}>
           <CardBody>
-            <p>
-              {this.props.description}
-            </p>
+            <ReactPlayer controls={true} url={this.props.videoUrl} playing={this.state.isOpen} width="100%" />
+            <div>
+              <p>
+                {this.props.description}
+              </p>
+            </div>
             <div>{setStatusButtons}</div>
           </CardBody>
         </Collapse>

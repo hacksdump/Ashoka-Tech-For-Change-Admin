@@ -2,14 +2,14 @@ import React from 'react';
 import ComplaintCard from './ComplaintCard';
 import { connect, useSelector } from 'react-redux';
 import { setComplaintStatus } from 'actions';
-import { useFirebaseConnect } from 'react-redux-firebase';
+import { useFirebaseConnect, useFirebase } from 'react-redux-firebase';
 import { MEDIATOR, OFFICIAL } from 'constants/user-roles';
 
 const mapStateToProps = state => {
   const data = {
     user: {
       name: state.firebase.profile.name
-    }
+    },
   }
   if (state.firebase.profile.role === MEDIATOR) {
     data.user.role = MEDIATOR;
@@ -27,6 +27,7 @@ const mapDispatchToProps = dispatch => {
 }
 
 function ConnectedComplaints(props) {
+  const firebase = useFirebase();
   useFirebaseConnect([
     {
       path: 'complaints',
@@ -34,6 +35,9 @@ function ConnectedComplaints(props) {
     },
   ]);
   const complaints = useSelector(state => state.firebase.ordered.complaints);
+  const updateOfficerComment = (complaintID, comment) => {
+    return firebase.update(`complaints/${complaintID}`, { officerComment: comment })
+  }
   return (
     <div>
       {complaints ? complaints.map(data => {
@@ -43,6 +47,7 @@ function ConnectedComplaints(props) {
             key={complaintData.compID}
             {...complaintData}
             setComplaintStatus={(status) => props.setComplaintStatus(complaintData.compID, status)}
+            updateComment={(newComment) => updateOfficerComment(complaintData.compID, newComment)}
           />
         )
       })

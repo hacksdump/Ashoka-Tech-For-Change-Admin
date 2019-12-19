@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, CardHeader, CardBody, CardFooter, Collapse, Button } from 'reactstrap';
+import { Card, CardHeader, CardBody, CardFooter, Collapse, Button, Input } from 'reactstrap';
 import { COMPLAINT_STATUS } from 'constants/states';
 import ReactPlayer from 'react-player';
 
@@ -35,10 +35,18 @@ function SetStatusButton(props) {
 export default class ComplaintCard extends Component {
   state = {
     isOpen: false,
+    officerComment: this.props.officerComment,
   }
 
   toggleCollapse = () => {
     this.setState({ isOpen: !(this.state.isOpen) });
+  }
+
+  handleChange = (e) => {
+    this.setState({
+      officerComment: e.target.value
+    })
+    this.props.updateComment(e.target.value)
   }
 
   render() {
@@ -92,6 +100,10 @@ export default class ComplaintCard extends Component {
               </p>
             </div>
             <div>{setStatusButtons}</div>
+            <div>
+              Your Comment
+              <Input value={this.state.officerComment} onChange={this.handleChange} />
+            </div>
           </CardBody>
         </Collapse>
         <CardFooter>

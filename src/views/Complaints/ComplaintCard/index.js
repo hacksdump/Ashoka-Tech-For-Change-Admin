@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Card, CardHeader, CardBody, CardFooter, Collapse, Button, Input, Badge } from 'reactstrap';
+import { Card, CardHeader, CardBody, CardFooter, Collapse, Button, Input, Badge, Form } from 'reactstrap';
 import { COMPLAINT_STATUS } from 'constants/states';
 import ReactPlayer from 'react-player';
+import { OFFICIAL, MEDIATOR } from 'constants/user-roles';
 
 function SetStatusButton(props) {
   let bootstrapClass = "";
@@ -36,10 +37,29 @@ export default class ComplaintCard extends Component {
   state = {
     isOpen: false,
     officerComment: this.props.officerComment,
+    officialName: "",
+    department: "",
   }
 
   toggleCollapse = () => {
     this.setState({ isOpen: !(this.state.isOpen) });
+  }
+
+  handleNameChange = (e) => {
+    this.setState({
+      officialName: e.target.value
+    })
+  }
+
+  handleDepartmentChange = (e) => {
+    this.setState({
+      department: e.target.value
+    })
+  }
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.props.assignComplaint(this.state.officialName, this.state.department);
   }
 
   handleChange = (e) => {
@@ -105,11 +125,35 @@ export default class ComplaintCard extends Component {
                 {this.props.description}
               </p>
             </div>
-            <div>{setStatusButtons}</div>
-            <div style={{ margin: '10px' }}>
-              Your Comment
+            {
+              (this.props.role === OFFICIAL) ?
+                (
+                  <div>
+                    <div>{setStatusButtons}</div>
+                    <div style={{ margin: '10px' }}>
+                      Your Comment
               <Input value={this.state.officerComment} onChange={this.handleChange} />
-            </div>
+                    </div>
+                  </div>
+                )
+                : (this.props.role === MEDIATOR) ?
+                  (
+                    <div>
+                      <Form onSubmit={this.handleSubmit}>
+                        <label>
+                          Official:
+                          <input type="text" value={this.state.officialName} onChange={this.handleNameChange} />
+                        </label>
+                        <label>
+                          Department:
+                          <input type="text" value={this.state.department} onChange={this.handleDepartmentChange} />
+                        </label>
+                        <input type="submit" value="Submit" />
+                      </Form>
+                    </div>
+                  ) :
+                  <></>
+            }
           </CardBody>
         </Collapse>
         <CardFooter>
@@ -128,7 +172,7 @@ export default class ComplaintCard extends Component {
             <Badge pill color="success">{likes}</Badge>
           </div>
         </CardFooter>
-      </Card>
+      </Card >
     )
   }
 }

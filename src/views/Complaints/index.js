@@ -8,7 +8,7 @@ import { MEDIATOR, OFFICIAL } from 'constants/user-roles';
 const mapStateToProps = state => {
   const data = {
     user: {
-      name: state.firebase.profile.name
+      name: state.firebase.profile.name,
     },
   }
   if (state.firebase.profile.role === MEDIATOR) {
@@ -31,12 +31,22 @@ function ConnectedComplaints(props) {
   useFirebaseConnect([
     {
       path: 'complaints',
-      queryParams: ['orderByChild=officerName', `equalTo=${props.user.name}`]
+      queryParams: (props.user.role === OFFICIAL)
+        ? ['orderByChild=officerName', `equalTo=${props.user.name}`]
+        : ['orderByChild=officer', 'equalTo=unassigned']
     },
   ]);
   const complaints = useSelector(state => state.firebase.ordered.complaints);
   const updateOfficerComment = (complaintID, comment) => {
     return firebase.update(`complaints/${complaintID}`, { officerComment: comment })
+  }
+
+  const assignComplaint = (complaintID, officerName, department) => {
+    return firebase.update(`complaints/${complaintID}`, {
+      officer: "assigned",
+      officerName: officerName,
+      department: department,
+    })
   }
   return (
     <div>
@@ -47,7 +57,9 @@ function ConnectedComplaints(props) {
             key={complaintData.compID}
             {...complaintData}
             setComplaintStatus={(status) => props.setComplaintStatus(complaintData.compID, status)}
+            assignComplaint={(officerName, department) => assignComplaint(complaintData.compID, officerName, department)}
             updateComment={(newComment) => updateOfficerComment(complaintData.compID, newComment)}
+            role={props.user.role}
           />
         )
       })

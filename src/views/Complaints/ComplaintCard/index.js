@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, CardHeader, CardBody, CardFooter, Collapse, Button, Input } from 'reactstrap';
+import { Card, CardHeader, CardBody, CardFooter, Collapse, Button, Input, Badge } from 'reactstrap';
 import { COMPLAINT_STATUS } from 'constants/states';
 import ReactPlayer from 'react-player';
 
@@ -16,7 +16,7 @@ function SetStatusButton(props) {
       message = "Progress"
       break;
     case COMPLAINT_STATUS.RESOLVED:
-      bootstrapClass = "btn btn-light";
+      bootstrapClass = "btn btn-success";
       message = "Resolve"
       break;
     default:
@@ -50,13 +50,17 @@ export default class ComplaintCard extends Component {
   }
 
   render() {
+    const likes = this.props.Like ? Object.keys(this.props.Like).length : 0;
+    const tags = this.props.tags ? this.props.tags.split(' ') : [];
     let statusText = ""
     let statusStyleClass = "";
+    let tagPillColor = "";
     let setStatusButtons = null;
     switch (this.props.status) {
       case COMPLAINT_STATUS.OPEN:
         statusText = "Open";
         statusStyleClass = "bg-danger";
+        tagPillColor = "danger";
         setStatusButtons =
           <div>
             <SetStatusButton status={COMPLAINT_STATUS.PROGRESS} setComplaintStatus={this.props.setComplaintStatus} />
@@ -66,6 +70,7 @@ export default class ComplaintCard extends Component {
       case COMPLAINT_STATUS.PROGRESS:
         statusText = "In Progress";
         statusStyleClass = "bg-warning";
+        tagPillColor = "warning";
         setStatusButtons =
           <div>
             <SetStatusButton status={COMPLAINT_STATUS.OPEN} setComplaintStatus={this.props.setComplaintStatus} />
@@ -74,7 +79,8 @@ export default class ComplaintCard extends Component {
         break;
       case COMPLAINT_STATUS.RESOLVED:
         statusText = "Resolved";
-        statusStyleClass = "bg-light";
+        statusStyleClass = "bg-success";
+        tagPillColor = "success";
         setStatusButtons =
           <div>
             <SetStatusButton status={COMPLAINT_STATUS.PROGRESS} setComplaintStatus={this.props.setComplaintStatus} />
@@ -95,19 +101,32 @@ export default class ComplaintCard extends Component {
           <CardBody>
             <ReactPlayer controls={true} url={this.props.videoUrl} playing={this.state.isOpen} width="100%" />
             <div>
-              <p>
+              <p style={{ padding: '10px', margin: '10px' }}>
                 {this.props.description}
               </p>
             </div>
             <div>{setStatusButtons}</div>
-            <div>
+            <div style={{ margin: '10px' }}>
               Your Comment
               <Input value={this.state.officerComment} onChange={this.handleChange} />
             </div>
           </CardBody>
         </Collapse>
         <CardFooter>
-          {this.props.date}
+          <span>
+            <span>Complaint issued by {this.props.name} at </span>
+            <span>{this.props.date} </span>
+            <span>{this.props.time}</span>
+          </span>
+          <span>
+            {tags.map(tag => (
+              <Badge style={{ margin: '5px' }} pill color={tagPillColor}>{tag}</Badge>
+            ))}
+          </span>
+          <div className="float-right">
+            <span style={{ margin: "5px" }}> Likes</span>
+            <Badge pill color="success">{likes}</Badge>
+          </div>
         </CardFooter>
       </Card>
     )

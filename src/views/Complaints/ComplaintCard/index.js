@@ -120,7 +120,7 @@ export default class ComplaintCard extends Component {
           </span>
           <span>
             {tags.map(tag => (
-              <Badge style={{ margin: '5px' }} pill color={tagPillColor}>{tag}</Badge>
+              <Badge key={tag} style={{ margin: '5px' }} pill color={tagPillColor}>{tag}</Badge>
             ))}
           </span>
           <div className="float-right">

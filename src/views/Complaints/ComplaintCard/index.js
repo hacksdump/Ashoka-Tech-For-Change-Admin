@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, CardHeader, CardBody, CardFooter, Collapse, Button, Input, Badge, Form } from 'reactstrap';
+import { Card, CardHeader, CardBody, CardFooter, Collapse, Button, Input, Badge, Form, FormGroup, Label } from 'reactstrap';
 import { COMPLAINT_STATUS } from 'constants/states';
 import ReactPlayer from 'react-player';
 import { OFFICIAL, MEDIATOR } from 'constants/user-roles';
@@ -140,15 +140,19 @@ export default class ComplaintCard extends Component {
                   (
                     <div>
                       <Form onSubmit={this.handleSubmit}>
-                        <label>
-                          Official:
-                          <input type="text" value={this.state.officialName} onChange={this.handleNameChange} />
-                        </label>
-                        <label>
-                          Department:
-                          <input type="text" value={this.state.department} onChange={this.handleDepartmentChange} />
-                        </label>
-                        <input type="submit" value="Submit" />
+                        <FormGroup>
+                          <Label>
+                            Official:
+                          <Input type="text" value={this.state.officialName} onChange={this.handleNameChange} />
+                          </Label>
+                        </FormGroup>
+                        <FormGroup>
+                          <Label>
+                            Department:
+                          <Input type="text" value={this.state.department} onChange={this.handleDepartmentChange} />
+                          </Label>
+                        </FormGroup>
+                        <Input type="submit" value="Submit" className="btn btn-success" style={{ width: '100px' }} />
                       </Form>
                     </div>
                   ) :

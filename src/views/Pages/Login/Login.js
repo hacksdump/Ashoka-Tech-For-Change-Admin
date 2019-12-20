@@ -4,6 +4,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
 import { attemptLogin } from 'actions';
 import { ADMIN_ROLES } from 'constants/user-roles';
+import firebase from 'firebase/app';
 
 
 const mapStateToProps = state => {
@@ -42,10 +43,10 @@ class ConnectedLogin extends Component {
     ;
     event.preventDefault();
     const { email, password } = this.state;
-    this.props.authenticate({
+    firebase.login({
       email: email,
       password: password
-    });
+    })
     this.setState({ email: "", password: "" })
   }
   render() {

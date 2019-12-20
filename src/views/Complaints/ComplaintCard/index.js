@@ -1,5 +1,19 @@
 import React, { Component } from 'react';
-import { Card, CardHeader, CardBody, CardFooter, Collapse, Button, Input, Badge, Form, FormGroup, Label } from 'reactstrap';
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Collapse,
+  Button,
+  Input,
+  Badge,
+  Form,
+  Dropdown,
+  DropdownItem,
+  DropdownToggle,
+  DropdownMenu
+} from 'reactstrap';
 import { COMPLAINT_STATUS } from 'constants/states';
 import ReactPlayer from 'react-player';
 import { OFFICIAL, MEDIATOR } from 'constants/user-roles';
@@ -37,24 +51,37 @@ export default class ComplaintCard extends Component {
   state = {
     isOpen: false,
     officerComment: this.props.officerComment,
-    officialName: "",
-    department: "",
+    selectedDepartment: null,
+    departmentDropdownIsOpen: false,
+    officialDropdownIsOpen: false,
+    officials: [],
+  }
+
+  toggleDropdown = (type) => {
+    if (type === 'department') {
+      this.setState({ departmentDropdownIsOpen: !this.state.departmentDropdownIsOpen })
+    }
+    else if (type === 'official') {
+      this.setState({ officialDropdownIsOpen: !this.state.officialDropdownIsOpen })
+
+    }
   }
 
   toggleCollapse = () => {
     this.setState({ isOpen: !(this.state.isOpen) });
   }
 
-  handleNameChange = (e) => {
-    this.setState({
-      officialName: e.target.value
-    })
+  handleSelectDepartment = (index) => {
+    console.log(this.props.departments[index])
+    const officials = Object.keys(this.props.departments[index].value).map(key => ({ uid: key, name: this.props.departments[index].value[key], department: this.props.departments[index].key }))
+    this.setState({ departmentDropdownIsOpen: false, selectedDepartment: this.props.departments[index].key, officials: officials })
   }
 
-  handleDepartmentChange = (e) => {
-    this.setState({
-      department: e.target.value
-    })
+  handleSelectOfficial = (index) => {
+    const officialID = this.state.officials[index].uid;
+    const officialName = this.state.officials[index].name;
+    const department = this.state.officials[index].department;
+    this.props.assignComplaint(officialID, officialName, department)
   }
 
   handleSubmit = (e) => {
@@ -111,6 +138,8 @@ export default class ComplaintCard extends Component {
         statusText = "Unknown";
         statusStyleClass = "";
     }
+    const departments = this.props.departments ? this.props.departments.map(department => department.key) : [];
+    const officials = this.state.officials;
     return (
       <Card>
         <CardHeader onClick={this.toggleCollapse} className={statusStyleClass}>
@@ -140,19 +169,35 @@ export default class ComplaintCard extends Component {
                   (
                     <div>
                       <Form onSubmit={this.handleSubmit}>
-                        <FormGroup>
-                          <Label>
-                            Official:
-                          <Input type="text" value={this.state.officialName} onChange={this.handleNameChange} />
-                          </Label>
-                        </FormGroup>
-                        <FormGroup>
-                          <Label>
-                            Department:
-                          <Input type="text" value={this.state.department} onChange={this.handleDepartmentChange} />
-                          </Label>
-                        </FormGroup>
-                        <Input type="submit" value="Submit" className="btn btn-success" style={{ width: '100px' }} />
+                        <Dropdown isOpen={this.state.departmentDropdownIsOpen} toggle={() => this.toggleDropdown('department')}>
+                          <DropdownToggle caret>
+                            {this.state.selectedDepartment ? this.state.selectedDepartment : "Select Department"}
+                          </DropdownToggle>
+                          <DropdownMenu>
+                            <DropdownItem header>Department</DropdownItem>
+                            {departments.map((department, index) => (
+                              <DropdownItem key={index} onClick={() => this.handleSelectDepartment(index)}>{department} </DropdownItem>
+                            )
+                            )}
+                          </DropdownMenu>
+                        </Dropdown>
+
+                        {
+                          this.state.selectedDepartment ?
+                            <Dropdown isOpen={this.state.officialDropdownIsOpen} toggle={() => this.toggleDropdown('official')}>
+                              <DropdownToggle caret>
+                                {this.state.selectedOfficial ? this.state.selectedOfficial : "Select Ofiicial"}
+                              </DropdownToggle>
+                              <DropdownMenu>
+                                <DropdownItem header>Official</DropdownItem>
+                                {officials.map((official, index) => (
+                                  <DropdownItem key={index} onClick={() => this.handleSelectOfficial(index)}>{official.name}</DropdownItem>
+                                )
+                                )}
+                              </DropdownMenu>
+                            </Dropdown>
+                            : null
+                        }
                       </Form>
                     </div>
                   ) :

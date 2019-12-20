@@ -24,15 +24,15 @@ function SetStatusButton(props) {
   switch (props.status) {
     case COMPLAINT_STATUS.OPEN:
       bootstrapClass = "btn btn-danger";
-      message = "Open"
+      message = "Pending"
       break;
     case COMPLAINT_STATUS.PROGRESS:
       bootstrapClass = "btn btn-warning";
-      message = "Progress"
+      message = "In Process"
       break;
     case COMPLAINT_STATUS.RESOLVED:
       bootstrapClass = "btn btn-success";
-      message = "Resolve"
+      message = "Resolved"
       break;
     default:
       bootstrapClass = "btn";
@@ -105,7 +105,7 @@ export default class ComplaintCard extends Component {
     let setStatusButtons = null;
     switch (this.props.status) {
       case COMPLAINT_STATUS.OPEN:
-        statusText = "Open";
+        statusText = "Pending";
         statusStyleClass = "bg-danger";
         tagPillColor = "danger";
         setStatusButtons =
@@ -115,7 +115,7 @@ export default class ComplaintCard extends Component {
           </div>
         break;
       case COMPLAINT_STATUS.PROGRESS:
-        statusText = "In Progress";
+        statusText = "In Process";
         statusStyleClass = "bg-warning";
         tagPillColor = "warning";
         setStatusButtons =

@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Link, Redirect } from 'react-router-dom';
+import { connect, useSelector } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
 import { attemptLogin } from 'actions';
 import { ADMIN_ROLES } from 'constants/user-roles';
 import firebase from 'firebase/app';
+import { isLoaded } from 'react-redux-firebase';
 
 
 const mapStateToProps = state => {
@@ -20,6 +21,12 @@ const mapDispatchToProps = dispatch => {
     authenticate: (credentials) => dispatch(attemptLogin(credentials)),
   };
 };
+
+function AuthIsLoaded() {
+  const auth = useSelector(state => state.firebase.auth)
+  if (!isLoaded(auth)) return <div>Logging you in...</div>;
+  return null
+}
 
 class ConnectedLogin extends Component {
   constructor(props) {
@@ -67,6 +74,7 @@ class ConnectedLogin extends Component {
                   <CardBody>
                     <Form onSubmit={this.handleSubmit}>
                       <h1>Login</h1>
+                      <AuthIsLoaded />
                       <p className="text-muted">Sign In to your account</p>
                       <InputGroup className="mb-3">
                         <InputGroupAddon addonType="prepend">
@@ -107,18 +115,6 @@ class ConnectedLogin extends Component {
                         </Col>
                       </Row>
                     </Form>
-                  </CardBody>
-                </Card>
-                <Card className="text-white bg-primary py-5 d-md-down-none" style={{ width: '44%' }}>
-                  <CardBody className="text-center">
-                    <div>
-                      <h2>Sign up</h2>
-                      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
-                        labore et dolore magna aliqua.</p>
-                      <Link to="/register">
-                        <Button color="primary" className="mt-3" active tabIndex={-1}>Register Now!</Button>
-                      </Link>
-                    </div>
                   </CardBody>
                 </Card>
               </CardGroup>

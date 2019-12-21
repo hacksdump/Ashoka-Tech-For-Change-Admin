@@ -72,7 +72,6 @@ export default class ComplaintCard extends Component {
   }
 
   handleSelectDepartment = (index) => {
-    console.log(this.props.departments[index])
     const officials = Object.keys(this.props.departments[index].value).map(key => ({ uid: key, name: this.props.departments[index].value[key], department: this.props.departments[index].key }))
     this.setState({ departmentDropdownIsOpen: false, selectedDepartment: this.props.departments[index].key, officials: officials })
   }

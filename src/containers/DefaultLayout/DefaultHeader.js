@@ -4,7 +4,9 @@ import { UncontrolledDropdown, DropdownItem, DropdownMenu, DropdownToggle, Nav, 
 import PropTypes from 'prop-types';
 
 import { AppNavbarBrand, AppSidebarToggler } from '@coreui/react';
+import UserDetails from './UserDetails';
 import logo from '../../assets/img/brand/logo.png'
+
 
 const propTypes = {
   children: PropTypes.node,
@@ -34,7 +36,7 @@ class DefaultHeader extends Component {
         <Nav className="ml-auto" navbar>
           <UncontrolledDropdown nav direction="down">
             <DropdownToggle nav>
-              <img src={'../../assets/img/avatars/6.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
+              <UserDetails />
             </DropdownToggle>
             <DropdownMenu right>
               <DropdownItem header tag="div" className="text-center"><strong>Account</strong></DropdownItem>
